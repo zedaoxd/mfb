@@ -1,10 +1,7 @@
 package com.myfitbody.domain.role;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -14,6 +11,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
 public class Role implements Serializable {
 
@@ -22,4 +20,8 @@ public class Role implements Serializable {
     private UUID id;
 
     private String name;
+
+    public RoleResponseDTO toResponseDTO() {
+        return new RoleResponseDTO(id, name);
+    }
 }
