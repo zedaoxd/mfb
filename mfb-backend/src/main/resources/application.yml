@@ -1,7 +1,28 @@
 spring:
+  mail:
+    host: ${EMAIL_HOST}
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_ID}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        mime:
+          charset: utf-8
+        smtp:
+          write-timeout: 10000
+          connectiontimeout: 10000
+          timeout: 10000
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    default-encoding: utf-8
+    verify:
+      host: ${VERIFY_EMAIL_HOST}
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+    active: ${ACTIVE_PROFILE:dev}
   jpa:
     open-in-view: false
-
+server:
+  port: ${SERVER_PORT}
 
