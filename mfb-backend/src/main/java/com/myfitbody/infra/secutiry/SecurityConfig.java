@@ -42,6 +42,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/users/verify-email/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/token-reset-password/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/reset-password/**").permitAll()
                         .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
