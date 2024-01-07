@@ -19,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByTokenVerifyEmail(UUID tokenVerifyEmail);
 
     Page<User> findAllByFirstNameIgnoreCaseStartingWithOrLastNameIgnoreCaseStartingWith(Pageable pageable, String firstName, String lastName);
+
+    Optional<User> findByTokenResetPassword(UUID tokenResetPassword);
 }
