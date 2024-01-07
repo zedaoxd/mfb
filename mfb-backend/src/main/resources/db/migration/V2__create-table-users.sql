@@ -6,8 +6,9 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     token_verify_email UUID,
     token_reset_password UUID,
-    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN NOT NULL DEFAULT FALSE,
+    inactive_message TEXT,
     primary key (id)
 );
