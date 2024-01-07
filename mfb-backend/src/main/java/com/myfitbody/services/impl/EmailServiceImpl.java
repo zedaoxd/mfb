@@ -4,6 +4,7 @@ import com.myfitbody.services.contracts.EmailService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -26,7 +27,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    public void sendHtmlEmail(String to, String subject, String body) {
+    public void sendEmail(String to, String subject, String body, String... attachmentsPath) {
         try {
             Context context = new Context();
             context.setVariable("body", body);
@@ -34,20 +35,18 @@ public class EmailServiceImpl implements EmailService {
             MimeMessage message = getMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
             helper.setPriority(1);
-            helper.setFrom(fromEmail);
+            helper.setFrom(fromEmail, "MyFitBody");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(text, true);
+            for (String attachmentPath : attachmentsPath) {
+                helper.addAttachment(attachmentPath, new ClassPathResource(attachmentPath));
+            }
             emailSender.send(message);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    @Override
-    @Async
-    public void sendHtmlEmailWithAttachments(String to, String subject, String body, String... attachmentsPath) {
     }
 
     private MimeMessage getMimeMessage() {
