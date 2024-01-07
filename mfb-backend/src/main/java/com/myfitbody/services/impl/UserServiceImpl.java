@@ -193,30 +193,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         userRepository.save(user);
 
-        String body = """
-                <p>Clique abaixo para recuperar sua senha:</p>
-                <a href="%s"
-                    style="
-                        font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
-                        box-sizing: border-box;
-                        font-size: 14px;
-                        color: #FFF;
-                        text-decoration: none;
-                        line-height: 2em;
-                        font-weight: bold;
-                        text-align: center;
-                        cursor: pointer;
-                        display: inline-block;
-                        border-radius: 5px;
-                        text-transform: capitalize;
-                        background-color: #f5a967;
-                        margin: 0;
-                        padding: 3px 6px;"
-                >
-                	Clique aqui
-                </a>
-                <p>Se você não solicitou a recuperação de senha, por favor ignore este e-mail.</p>
-                """.formatted("http://" + "localhost:8080" + "/api/v1/users/recover-password/" + tokenResetPassword);
+        String url = "http://localhost:8080/api/v1/users/reset-password/" + tokenResetPassword;
+
+        String body = emailBodyTypeService.formatEmailBody(EmailBodyType.RESET_PASSWORD, Map.of("[[href]]", url));
 
         emailService.sendEmail(
                 user.getEmail(),
