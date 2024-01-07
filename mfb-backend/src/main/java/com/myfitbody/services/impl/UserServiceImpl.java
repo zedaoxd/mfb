@@ -13,7 +13,6 @@ import com.myfitbody.services.contracts.EmailService;
 import com.myfitbody.services.contracts.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +28,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
@@ -97,8 +95,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         String url = "http://localhost:8080/api/v1/users/verify-email/" + tokenVerifyEmail;
 
         String body = emailBodyTypeService.formatEmailBody(EmailBodyType.VERIFY_EMAIL, Map.of("[[href]]", url));
-
-        log.info("Email body: {}", body);
 
         emailService.sendEmail(
                 entity.getEmail(),
