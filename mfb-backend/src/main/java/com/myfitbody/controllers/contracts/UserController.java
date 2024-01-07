@@ -18,4 +18,6 @@ public interface UserController {
     ResponseEntity<HttpResponse<UserResponseDTO>> getUserById(UUID id);
     ResponseEntity<HttpResponse<Page<UserResponseDTO>>> getAllUsers(Pageable pageable, String search);
     ResponseEntity<HttpResponse<Void>> deleteUser(UUID id);
+    ResponseEntity<HttpResponse<Boolean>> tokenResetPassword(String email);
+    ResponseEntity<HttpResponse<UserResponseDTO>> resetPassword(UUID token, UserResetPasswordDTO dto);
 }

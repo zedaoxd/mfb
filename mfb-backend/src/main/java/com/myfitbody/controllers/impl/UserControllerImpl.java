@@ -86,6 +86,34 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
+    @GetMapping("/token-reset-password")
+    public ResponseEntity<HttpResponse<Boolean>> tokenResetPassword(String email) {
+        boolean isSuccess = userService.tokenResetPassword(email);
+        return ResponseEntity.ok(HttpResponse.<Boolean>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Password reset")
+                .data(Map.of("isSuccess", isSuccess))
+                .timestamp(Instant.now())
+                .build()
+        );
+    }
+
+    @Override
+    @PostMapping("/reset-password/{token}")
+    public ResponseEntity<HttpResponse<UserResponseDTO>> resetPassword(@PathVariable UUID token, @RequestBody UserResetPasswordDTO dto) {
+        UserResponseDTO userResponseDTO = userService.resetPassword(token, dto);
+        return ResponseEntity.ok(HttpResponse.<UserResponseDTO>builder()
+                .status(HttpStatus.OK)
+                .statusCode(HttpStatus.OK.value())
+                .message("Password reset")
+                .data(Map.of("user", userResponseDTO))
+                .timestamp(Instant.now())
+                .build()
+        );
+    }
+
+    @Override
     @PostMapping("/register")
     public ResponseEntity<HttpResponse<UserResponseDTO>> register(@RequestBody @Valid UserCreateDTO dto) {
         UserResponseDTO userResponseDTO = userService.createUser(dto);
