@@ -1,5 +1,6 @@
 package com.myfitbody.services.impl;
 
+import com.myfitbody.domain.email.EmailBodyType;
 import com.myfitbody.domain.exceptions.DatabaseException;
 import com.myfitbody.domain.exceptions.ResourceNotFoundException;
 import com.myfitbody.domain.role.Role;
@@ -7,10 +8,12 @@ import com.myfitbody.domain.role.RoleRequestDTO;
 import com.myfitbody.domain.user.*;
 import com.myfitbody.repositories.RoleRepository;
 import com.myfitbody.repositories.UserRepository;
+import com.myfitbody.services.contracts.EmailBodyTypeService;
 import com.myfitbody.services.contracts.EmailService;
 import com.myfitbody.services.contracts.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,14 +24,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final EmailBodyTypeService emailBodyTypeService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
@@ -88,32 +94,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
         var entity = userRepository.save(user);
 
-        String body = """
-                <p>Clique abaixo para validar seu e-mail:</p>
-                <a href="%s"
-                    style="
-                        font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
-                        box-sizing: border-box;
-                        font-size: 14px;
-                        color: #FFF;
-                        text-decoration: none;
-                        line-height: 2em;
-                        font-weight: bold;
-                        text-align: center;
-                        cursor: pointer;
-                        display: inline-block;
-                        border-radius: 5px;
-                        text-transform: capitalize;
-                        background-color: #f5a967;
-                        margin: 0;
-                        padding: 3px 6px;"
-                >
-                	Clique aqui
-                </a>
-                <p>Se você não realizou o cadastro em nosso site, por favor ignore este e-mail.</p>
-                """.formatted("http://" + "localhost:8080" + "/api/v1/users/verify-email/" + tokenVerifyEmail);
+        String url = "http://localhost:8080/api/v1/users/verify-email/" + tokenVerifyEmail;
 
-        emailService.sendHtmlEmail(
+        String body = emailBodyTypeService.formatEmailBody(EmailBodyType.VERIFY_EMAIL, Map.of("[[href]]", url));
+
+        log.info("Email body: {}", body);
+
+        emailService.sendEmail(
                 entity.getEmail(),
                 "Verifique seu e-mail",
                 body
@@ -156,6 +143,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Transactional
+    @Override
     public UserResponseDTO updateUserEmail(UUID id, UserEditEmailDTO dto) {
         User user = userRepository
                 .findById(id)
@@ -194,5 +182,67 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integrity violation");
         }
+    }
+
+    @Transactional
+    @Override
+    public boolean tokenResetPassword(String email) {
+        User user = userRepository
+                .findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found email: " + email));
+
+        UUID tokenResetPassword = UUID.randomUUID();
+
+        user.setTokenResetPassword(tokenResetPassword);
+
+        userRepository.save(user);
+
+        String body = """
+                <p>Clique abaixo para recuperar sua senha:</p>
+                <a href="%s"
+                    style="
+                        font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+                        box-sizing: border-box;
+                        font-size: 14px;
+                        color: #FFF;
+                        text-decoration: none;
+                        line-height: 2em;
+                        font-weight: bold;
+                        text-align: center;
+                        cursor: pointer;
+                        display: inline-block;
+                        border-radius: 5px;
+                        text-transform: capitalize;
+                        background-color: #f5a967;
+                        margin: 0;
+                        padding: 3px 6px;"
+                >
+                	Clique aqui
+                </a>
+                <p>Se você não solicitou a recuperação de senha, por favor ignore este e-mail.</p>
+                """.formatted("http://" + "localhost:8080" + "/api/v1/users/recover-password/" + tokenResetPassword);
+
+        emailService.sendEmail(
+                user.getEmail(),
+                "Recuperação de senha",
+                body
+        );
+
+        return true;
+    }
+
+    @Transactional
+    @Override
+    public UserResponseDTO resetPassword(UUID token, UserResetPasswordDTO dto) {
+        User user = userRepository
+                .findByTokenResetPassword(token)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found token: " + token));
+
+        user.setTokenResetPassword(null);
+        user.setPassword(passwordEncoder.encode(dto.password()));
+
+        userRepository.save(user);
+
+        return user.toResponseDTO();
     }
 }
