@@ -86,8 +86,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    @GetMapping("/token-reset-password")
-    public ResponseEntity<HttpResponse<Boolean>> tokenResetPassword(String email) {
+    @GetMapping("/token-reset-password/{email}")
+    public ResponseEntity<HttpResponse<Boolean>> tokenResetPassword(@PathVariable String email) {
         boolean isSuccess = userService.tokenResetPassword(email);
         return ResponseEntity.ok(HttpResponse.<Boolean>builder()
                 .status(HttpStatus.OK)
@@ -101,7 +101,7 @@ public class UserControllerImpl implements UserController {
 
     @Override
     @PostMapping("/reset-password/{token}")
-    public ResponseEntity<HttpResponse<UserResponseDTO>> resetPassword(@PathVariable UUID token, @RequestBody UserResetPasswordDTO dto) {
+    public ResponseEntity<HttpResponse<UserResponseDTO>> resetPassword(@PathVariable UUID token, @RequestBody @Valid UserResetPasswordDTO dto) {
         UserResponseDTO userResponseDTO = userService.resetPassword(token, dto);
         return ResponseEntity.ok(HttpResponse.<UserResponseDTO>builder()
                 .status(HttpStatus.OK)
