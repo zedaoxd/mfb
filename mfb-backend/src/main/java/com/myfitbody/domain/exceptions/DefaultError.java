@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 
@@ -13,8 +14,8 @@ import java.time.Instant;
 @Builder
 public class DefaultError {
     private Instant timestamp;
-    private Integer status;
-    private String error;
+    private HttpStatus status;
+    private int statusCode;
     private String message;
     private String path;
 }
