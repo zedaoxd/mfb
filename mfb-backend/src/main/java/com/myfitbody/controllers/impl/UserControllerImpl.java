@@ -27,20 +27,6 @@ public class UserControllerImpl implements UserController {
     private final UserService userService;
 
     @Override
-    @GetMapping("/verify-email/{token}")
-    public ResponseEntity<HttpResponse<Boolean>> verifyEmail(@PathVariable UUID token) {
-        boolean isSuccess = userService.verifyEmail(token);
-        return ResponseEntity.ok(HttpResponse.<Boolean>builder()
-                .status(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .message("Email verified")
-                .data(Map.of("isSuccess", isSuccess))
-                .timestamp(Instant.now())
-                .build()
-        );
-    }
-
-    @Override
     @GetMapping("/{id}")
     public ResponseEntity<HttpResponse<UserResponseDTO>> getUserById(@PathVariable UUID id) {
         UserResponseDTO userResponseDTO = userService.getUserById(id);
@@ -86,36 +72,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    @GetMapping("/token-reset-password/{email}")
-    public ResponseEntity<HttpResponse<Boolean>> tokenResetPassword(@PathVariable String email) {
-        boolean isSuccess = userService.tokenResetPassword(email);
-        return ResponseEntity.ok(HttpResponse.<Boolean>builder()
-                .status(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .message("Password reset")
-                .data(Map.of("isSuccess", isSuccess))
-                .timestamp(Instant.now())
-                .build()
-        );
-    }
-
-    @Override
-    @PostMapping("/reset-password/{token}")
-    public ResponseEntity<HttpResponse<UserResponseDTO>> resetPassword(@PathVariable UUID token, @RequestBody @Valid UserResetPasswordDTO dto) {
-        UserResponseDTO userResponseDTO = userService.resetPassword(token, dto);
-        return ResponseEntity.ok(HttpResponse.<UserResponseDTO>builder()
-                .status(HttpStatus.OK)
-                .statusCode(HttpStatus.OK.value())
-                .message("Password reset")
-                .data(Map.of("user", userResponseDTO))
-                .timestamp(Instant.now())
-                .build()
-        );
-    }
-
-    @Override
     @PostMapping("/register")
-    public ResponseEntity<HttpResponse<UserResponseDTO>> register(@RequestBody @Valid UserCreateDTO dto) {
+    public ResponseEntity<HttpResponse<UserResponseDTO>> createUser(@RequestBody @Valid UserCreateDTO dto) {
         UserResponseDTO userResponseDTO = userService.createUser(dto);
         URI location = URI.create("/api/v1/users/" + userResponseDTO.id());
         return ResponseEntity.created(location).body(HttpResponse.<UserResponseDTO>builder()

@@ -14,8 +14,5 @@ public interface UserService {
     UserResponseDTO updateUser(UUID id, UserEditDTO dto);
     boolean updateUserPassword(UUID id, UserEditPasswordDTO dto);
     UserResponseDTO updateUserEmail(UUID id, UserEditEmailDTO dto);
-    boolean verifyEmail(UUID token);
     void deleteUser(UUID id);
-    boolean tokenResetPassword(String email);
-    UserResponseDTO resetPassword(UUID token, UserResetPasswordDTO dto);
 }

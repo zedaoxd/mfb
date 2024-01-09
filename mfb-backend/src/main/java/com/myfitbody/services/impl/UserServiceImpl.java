@@ -10,12 +10,15 @@ import com.myfitbody.repositories.RoleRepository;
 import com.myfitbody.repositories.UserRepository;
 import com.myfitbody.services.contracts.EmailBodyTypeService;
 import com.myfitbody.services.contracts.EmailService;
+import com.myfitbody.services.contracts.TokenService;
 import com.myfitbody.services.contracts.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,20 +31,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserDetailsService, UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final EmailBodyTypeService emailBodyTypeService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws ResourceNotFoundException {
-            return userRepository
-                    .findByEmailIgnoreCase(username)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
 
     @Transactional(readOnly = true)
     @Override
@@ -154,22 +150,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Transactional
     @Override
-    public boolean verifyEmail(UUID token) {
-        User user = userRepository
-                .findByTokenVerifyEmail(token)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found token: " + token));
-
-        user.setTokenVerifyEmail(null);
-        user.setInactiveMessage(null);
-        user.setActive(true);
-
-        userRepository.save(user);
-
-        return true;
-    }
-
-    @Transactional
-    @Override
     public void deleteUser(UUID id) {
         try {
             roleRepository.deleteById(id);
@@ -178,46 +158,5 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integrity violation");
         }
-    }
-
-    @Transactional
-    @Override
-    public boolean tokenResetPassword(String email) {
-        User user = userRepository
-                .findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found email: " + email));
-
-        UUID tokenResetPassword = UUID.randomUUID();
-
-        user.setTokenResetPassword(tokenResetPassword);
-
-        userRepository.save(user);
-
-        String url = "http://localhost:8080/api/v1/users/reset-password/" + tokenResetPassword;
-
-        String body = emailBodyTypeService.formatEmailBody(EmailBodyType.RESET_PASSWORD, Map.of("[[href]]", url));
-
-        emailService.sendEmail(
-                user.getEmail(),
-                "Recuperação de senha",
-                body
-        );
-
-        return true;
-    }
-
-    @Transactional
-    @Override
-    public UserResponseDTO resetPassword(UUID token, UserResetPasswordDTO dto) {
-        User user = userRepository
-                .findByTokenResetPassword(token)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found token: " + token));
-
-        user.setTokenResetPassword(null);
-        user.setPassword(passwordEncoder.encode(dto.password()));
-
-        userRepository.save(user);
-
-        return user.toResponseDTO();
     }
 }
