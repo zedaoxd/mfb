@@ -20,9 +20,13 @@ spring:
     verify:
       host: ${VERIFY_EMAIL_HOST}
   profiles:
-    active: ${ACTIVE_PROFILE:dev}
+    active: ${ACTIVE_PROFILE:test}
   jpa:
     open-in-view: false
 server:
   port: ${SERVER_PORT}
+api:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
 
