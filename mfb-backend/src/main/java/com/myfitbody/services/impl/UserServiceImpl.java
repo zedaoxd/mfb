@@ -10,17 +10,12 @@ import com.myfitbody.repositories.RoleRepository;
 import com.myfitbody.repositories.UserRepository;
 import com.myfitbody.services.contracts.EmailBodyTypeService;
 import com.myfitbody.services.contracts.EmailService;
-import com.myfitbody.services.contracts.TokenService;
 import com.myfitbody.services.contracts.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -148,11 +143,10 @@ public class UserServiceImpl implements UserService {
                 .toResponseDTO();
     }
 
-    @Transactional
     @Override
     public void deleteUser(UUID id) {
         try {
-            roleRepository.deleteById(id);
+            userRepository.deleteById(id);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("ID not found:" + id);
         } catch (DataIntegrityViolationException e) {
