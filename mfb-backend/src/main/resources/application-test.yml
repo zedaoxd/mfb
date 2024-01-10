@@ -19,6 +19,5 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         globally_quoted_identifiers: true
 
