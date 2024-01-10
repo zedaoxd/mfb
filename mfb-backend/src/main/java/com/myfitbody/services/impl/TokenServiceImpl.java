@@ -30,7 +30,6 @@ public class TokenServiceImpl implements TokenService {
                     .withIssuer("my-fit-body")
                     .withSubject(user.getEmail())
                     .withClaim("email", user.getEmail())
-                    .withClaim("roles", user.getRoles())
                     .withExpiresAt(getExpirationTime())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
