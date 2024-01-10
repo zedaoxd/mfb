@@ -72,7 +72,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    @PostMapping("/register")
+    @PostMapping("/create-user")
     public ResponseEntity<HttpResponse<UserResponseDTO>> createUser(@RequestBody @Valid UserCreateDTO dto) {
         UserResponseDTO userResponseDTO = userService.createUser(dto);
         URI location = URI.create("/api/v1/users/" + userResponseDTO.id());
