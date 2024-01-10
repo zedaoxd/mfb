@@ -2,23 +2,21 @@ package com.myfitbody.domain.food.ingredient;
 
 import com.myfitbody.domain.food.Food;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
-import java.util.UUID;
+
 
 @Entity
 @Table(name = "ingredients")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
-@EqualsAndHashCode(of = "id", callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class Ingredient extends Food {
 
-    private UUID id;
+
     private Boolean isChecked;
 
     @PrePersist

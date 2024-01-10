@@ -3,6 +3,7 @@ package com.myfitbody.domain.food;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@EqualsAndHashCode(of = "id")
 public abstract class Food {
 
     @Id
