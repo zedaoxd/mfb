@@ -29,4 +29,5 @@ api:
   security:
     jwt:
       secret: ${JWT_SECRET}
-
+cors:
+  origins: ${CORS_ORIGINS:*}
