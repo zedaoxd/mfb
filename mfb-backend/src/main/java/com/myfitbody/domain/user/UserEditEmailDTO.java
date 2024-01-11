@@ -8,5 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 public record UserEditEmailDTO(
         @NotBlank
         @Email
-        String email) {
+        String oldEmail,
+        @NotBlank
+        @Email
+        String newEmail) {
 }
