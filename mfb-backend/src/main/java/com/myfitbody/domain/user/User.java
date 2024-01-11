@@ -70,6 +70,10 @@ public class User implements Serializable, UserDetails {
         );
     }
 
+    public boolean isAdmin() {
+        return this.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+    }
+
     @PrePersist
     public void prePersist() {
         this.setCreatedAt(Instant.now());
