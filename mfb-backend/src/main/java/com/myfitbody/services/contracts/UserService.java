@@ -13,6 +13,7 @@ public interface UserService {
     UserResponseDTO createUser(UserCreateDTO dto);
     UserResponseDTO updateUser(UUID id, UserEditDTO dto);
     boolean updateUserPassword(UUID id, UserEditPasswordDTO dto);
-    UserResponseDTO updateUserEmail(UUID id, UserEditEmailDTO dto);
+    UserLoginResponseDTO updateUserEmail(UUID id, UserEditEmailDTO dto);
     void deleteUser(UUID id);
+    User currentUser();
 }
