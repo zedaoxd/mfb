@@ -1,6 +1,5 @@
-package com.myfitbody.infra.secutiry.filter;
+package com.myfitbody.config.secutiry.filter;
 
-import com.myfitbody.repositories.UserRepository;
 import com.myfitbody.services.contracts.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
