@@ -1,5 +1,6 @@
 package com.myfitbody.domain.food;
 
+import com.myfitbody.domain.food.enums.FoodTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,8 @@ public abstract class Food {
     private double fat;
     private double carbohydrates;
     private String imgUrl;
+    @Enumerated(EnumType.STRING)
+    private FoodTime foodTime;
     private Instant createdAt;
     private Instant updatedAt;
 }
