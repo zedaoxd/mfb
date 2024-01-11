@@ -1,9 +1,6 @@
 package com.myfitbody.controllers.contracts;
 
-import com.myfitbody.domain.exceptions.DatabaseException;
-import com.myfitbody.domain.exceptions.DefaultError;
-import com.myfitbody.domain.exceptions.ResourceNotFoundException;
-import com.myfitbody.domain.exceptions.ValidationException;
+import com.myfitbody.domain.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

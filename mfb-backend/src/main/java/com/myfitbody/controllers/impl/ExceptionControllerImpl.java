@@ -79,4 +79,21 @@ public class ExceptionControllerImpl implements ExceptionController {
                 .path(request.getRequestURI())
                 .build();
 
+        return ResponseEntity.status(status).body(error);
+    }
+
+//    @Override
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<DefaultError> handleException(Exception e, HttpServletRequest request) {
+//        var status = HttpStatus.INTERNAL_SERVER_ERROR;
+//        var error = DefaultError.builder()
+//                .timestamp(Instant.now())
+//                .status(status)
+//                .statusCode(status.value())
+//                .message(e.getMessage())
+//                .path(request.getRequestURI())
+//                .build();
+//
+//        return ResponseEntity.status(status).body(error);
+//    }
 }
