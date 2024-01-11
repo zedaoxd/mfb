@@ -13,4 +13,6 @@ public interface ExceptionController {
     ResponseEntity<DefaultError> handleDatabaseException(DatabaseException e, HttpServletRequest request);
     ResponseEntity<DefaultError> handleResourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request);
     ResponseEntity<ValidationException> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request);
+    ResponseEntity<DefaultError> handleJWTException(JWTException e, HttpServletRequest request);
+    //    ResponseEntity<DefaultError> handleException(Exception e, HttpServletRequest request);
 }

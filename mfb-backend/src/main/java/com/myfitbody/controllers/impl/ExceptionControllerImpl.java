@@ -67,5 +67,16 @@ public class ExceptionControllerImpl implements ExceptionController {
         return ResponseEntity.status(status).body(error);
     }
 
+    @Override
+    @ExceptionHandler(JWTException.class)
+    public ResponseEntity<DefaultError> handleJWTException(JWTException e, HttpServletRequest request) {
+        var status = HttpStatus.UNAUTHORIZED;
+        var error = DefaultError.builder()
+                .timestamp(Instant.now())
+                .status(status)
+                .statusCode(status.value())
+                .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
 
 }
