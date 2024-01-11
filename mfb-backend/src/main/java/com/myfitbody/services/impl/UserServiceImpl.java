@@ -10,15 +10,20 @@ import com.myfitbody.repositories.RoleRepository;
 import com.myfitbody.repositories.UserRepository;
 import com.myfitbody.services.contracts.EmailBodyTypeService;
 import com.myfitbody.services.contracts.EmailService;
+import com.myfitbody.services.contracts.TokenService;
 import com.myfitbody.services.contracts.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final EmailBodyTypeService emailBodyTypeService;
     private final EmailService emailService;
+    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
@@ -96,9 +102,12 @@ public class UserServiceImpl implements UserService {
         return entity.toResponseDTO();
     }
 
+    @SneakyThrows
     @Transactional
     @Override
     public UserResponseDTO updateUser(UUID id, UserEditDTO dto) {
+        validateIsCurrentUserOrAdmin(id);
+
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found id: " + id));
@@ -111,9 +120,12 @@ public class UserServiceImpl implements UserService {
                 .toResponseDTO();
     }
 
+    @SneakyThrows
     @Transactional
     @Override
     public boolean updateUserPassword(UUID id, UserEditPasswordDTO dto) {
+        validateIsCurrentUserOrAdmin(id);
+
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found id: " + id));
@@ -131,26 +143,46 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserResponseDTO updateUserEmail(UUID id, UserEditEmailDTO dto) {
+    public UserLoginResponseDTO updateUserEmail(UUID id, UserEditEmailDTO dto) {
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found id: " + id));
 
-        user.setEmail(dto.email());
+        user.setEmail(dto.newEmail());
+        String token = tokenService.generateToken(user);
 
-        return userRepository
-                .save(user)
-                .toResponseDTO();
+        return UserLoginResponseDTO.builder()
+                .token(token)
+                .user(user.toResponseDTO())
+                .build();
     }
 
+    @SneakyThrows
     @Override
     public void deleteUser(UUID id) {
         try {
+            validateIsCurrentUserOrAdmin(id);
             userRepository.deleteById(id);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("ID not found:" + id);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integrity violation");
+        }
+    }
+
+    public User currentUser() {
+        return userRepository
+                .findByEmailIgnoreCase(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    private void validateIsCurrentUserOrAdmin(UUID id) throws MethodArgumentNotValidException {
+        User currentUser = currentUser();
+
+        if (!currentUser.getId().equals(id) && !currentUser.isAdmin()) {
+            throw new MethodArgumentNotValidException(null,
+                    new BindException("id", "You can only edit your own user")
+            );
         }
     }
 }
