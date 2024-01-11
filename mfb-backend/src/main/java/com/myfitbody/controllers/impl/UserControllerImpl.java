@@ -43,7 +43,7 @@ public class UserControllerImpl implements UserController {
     @Override
     @GetMapping
     public ResponseEntity<HttpResponse<Page<UserResponseDTO>>> getAllUsers(
-            @PageableDefault(size = 20, sort = "firstName", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 20, sort = "firstName", direction = Sort.Direction.DESC)
             Pageable pageable,
             @RequestParam(required = false, defaultValue = "")
             String search) {
@@ -86,8 +86,8 @@ public class UserControllerImpl implements UserController {
         );
     }
 
-    @PostMapping("/update-password/{id}")
-    public ResponseEntity<HttpResponse<Boolean>> updatePassword(@PathVariable UUID id, @Valid UserEditPasswordDTO dto) {
+    @PutMapping("/update-password/{id}")
+    public ResponseEntity<HttpResponse<Boolean>> updatePassword(@PathVariable UUID id, @RequestBody @Valid UserEditPasswordDTO dto) {
         boolean isSuccess = userService.updateUserPassword(id, dto);
         return ResponseEntity.ok(HttpResponse.<Boolean>builder()
                 .status(HttpStatus.OK)
@@ -101,13 +101,13 @@ public class UserControllerImpl implements UserController {
 
     @Override
     @PutMapping("/update-email/{id}")
-    public ResponseEntity<HttpResponse<UserResponseDTO>> updateEmail(@PathVariable UUID id, @Valid UserEditEmailDTO dto) {
-        UserResponseDTO userResponseDTO = userService.updateUserEmail(id, dto);
-        return ResponseEntity.ok(HttpResponse.<UserResponseDTO>builder()
+    public ResponseEntity<HttpResponse<UserLoginResponseDTO>> updateEmail(@PathVariable UUID id, @RequestBody @Valid UserEditEmailDTO dto) {
+        UserLoginResponseDTO userLoginResponseDTO = userService.updateUserEmail(id, dto);
+        return ResponseEntity.ok(HttpResponse.<UserLoginResponseDTO>builder()
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
                 .message("Email updated")
-                .data(Map.of("user", userResponseDTO))
+                .data(Map.of("user", userLoginResponseDTO))
                 .timestamp(Instant.now())
                 .build()
         );
