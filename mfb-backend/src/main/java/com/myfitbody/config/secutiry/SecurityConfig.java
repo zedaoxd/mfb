@@ -1,6 +1,6 @@
-package com.myfitbody.infra.secutiry;
+package com.myfitbody.config.secutiry;
 
-import com.myfitbody.infra.secutiry.filter.SecurityFilter;
+import com.myfitbody.config.secutiry.filter.SecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/token-reset-password/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/reset-password/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/create-user").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
