@@ -12,7 +12,7 @@ public interface UserController {
 
     ResponseEntity<HttpResponse<UserResponseDTO>> createUser(UserCreateDTO dto);
     ResponseEntity<HttpResponse<Boolean>> updatePassword(UUID id, UserEditPasswordDTO dto);
-    ResponseEntity<HttpResponse<UserResponseDTO>> updateEmail(UUID id, UserEditEmailDTO dto);
+    ResponseEntity<HttpResponse<UserLoginResponseDTO>> updateEmail(UUID id, UserEditEmailDTO dto);
     ResponseEntity<HttpResponse<UserResponseDTO>> updateUser(UUID id, UserEditDTO dto);
     ResponseEntity<HttpResponse<UserResponseDTO>> getUserById(UUID id);
     ResponseEntity<HttpResponse<Page<UserResponseDTO>>> getAllUsers(Pageable pageable, String search);
