@@ -15,5 +15,5 @@ public interface UserService {
     boolean updateUserPassword(UUID id, UserEditPasswordDTO dto);
     UserLoginResponseDTO updateUserEmail(UUID id, UserEditEmailDTO dto);
     void deleteUser(UUID id);
-    User currentUser();
+    User getCurrentUser();
 }

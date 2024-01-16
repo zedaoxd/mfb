@@ -1,9 +1,9 @@
 spring:
   mail:
-    host: ${EMAIL_HOST}
-    port: ${EMAIL_PORT}
-    username: ${EMAIL_ID}
-    password: ${EMAIL_PASSWORD}
+    host: ${EMAIL_HOST:smtp.gmail.com}
+    port: ${EMAIL_PORT:587}
+    username: ${EMAIL_ID:admin@admin.com}
+    password: ${EMAIL_PASSWORD:password}
     properties:
       mail:
         mime:
@@ -18,16 +18,16 @@ spring:
             required: true
     default-encoding: utf-8
     verify:
-      host: ${VERIFY_EMAIL_HOST}
+      host: ${VERIFY_EMAIL_HOST:verify.myfitbody.co.kr}
   profiles:
-    active: ${ACTIVE_PROFILE:test}
+    active: ${ACTIVE_PROFILE:dev}
   jpa:
     open-in-view: false
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT:8080}
 api:
   security:
     jwt:
-      secret: ${JWT_SECRET}
+      secret: ${JWT_SECRET:secret}
 cors:
   origins: ${CORS_ORIGINS:*}

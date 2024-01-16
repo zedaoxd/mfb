@@ -1,26 +1,12 @@
-#Server
-SERVER_PORT: 8080
-ACTIVE_PROFILE: dev
-
 spring:
   datasource:
-    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:my-fit-body}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root}
   jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
     properties:
       hibernate:
-        format_sql: true
-        use_sql_comments: true
         jdbc:
-          lob:
-            non_contextual_creation: true
+          time_zone: UTC
+        globally_quoted_identifiers: true
 

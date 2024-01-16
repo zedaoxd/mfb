@@ -12,15 +12,19 @@ services:
     volumes:
       - postgres:/data/postgres
     restart: unless-stopped
-  pgadmin:
-    image: dpage/pgadmin4
+  db_test:
+    image: postgres:16-alpine
     ports:
-      - "8081:80"
+      - "5433:5432"
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${DB_ADMIN_EMAIL:-admin@root.com}
-      - PGADMIN_DEFAULT_PASSWORD=${DB_PASSWORD:-root}
-    depends_on:
-      - db
+      - POSTGRES_USER=${DB_USER:-root}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-root}
+      - POSTGRES_DB=${DB_NAME:-my-fit-body-test}
+    volumes:
+      - postgres_test:/data/postgres
+    restart: unless-stopped
 
 volumes:
     postgres:
+    postgres_test:
+

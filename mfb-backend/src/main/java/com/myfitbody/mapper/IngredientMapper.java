@@ -20,15 +20,15 @@ public class IngredientMapper {
         return ingredient;
     }
 
-    public static void copy(Ingredient entity, IngredientUpdateDTO dto) {
-        entity.setName(dto.name());
-        entity.setCalories(dto.calories());
-        entity.setProtein(dto.protein());
-        entity.setFat(dto.fat());
-        entity.setCarbohydrates(dto.carbohydrates());
-        entity.setImgUrl(dto.imgUrl());
-        entity.setIsChecked(dto.isChecked());
-        entity.setFoodTime(dto.foodTime());
+    public static void copy(Ingredient destination, IngredientUpdateDTO source) {
+        destination.setName(source.name());
+        destination.setCalories(source.calories());
+        destination.setProtein(source.protein());
+        destination.setFat(source.fat());
+        destination.setCarbohydrates(source.carbohydrates());
+        destination.setImgUrl(source.imgUrl());
+        destination.setIsChecked(source.isChecked());
+        destination.setFoodTime(source.foodTime());
     }
 
     public static IngredientResponseDTO toResponseDTO(Ingredient ingredient) {

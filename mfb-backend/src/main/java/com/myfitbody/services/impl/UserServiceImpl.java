@@ -170,14 +170,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public User currentUser() {
+    @Override
+    public User getCurrentUser() {
         return userRepository
                 .findByEmailIgnoreCase(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     private void validateIsCurrentUserOrAdmin(UUID id) throws MethodArgumentNotValidException {
-        User currentUser = currentUser();
+        User currentUser = getCurrentUser();
 
         if (!currentUser.getId().equals(id) && !currentUser.isAdmin()) {
             throw new MethodArgumentNotValidException(null,
